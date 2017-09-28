@@ -20,7 +20,7 @@ import util.DateTime;
 
 public class PopulateJFreeBarChartTaskImpl extends PopulateChartTaskImpl<CategoryDataset> {
 
-	private static Logger logger = LoggerFactory.getLogger(PopulateJFreeBarChartTaskImpl.class);
+	private  Logger logger = LoggerFactory.getLogger(PopulateJFreeBarChartTaskImpl.class);
 	
 	public PopulateJFreeBarChartTaskImpl(List<TableColumn<Integer,String>> f, String selectedXaxis, List<String> selectedYaxis) {
 		super(f, selectedXaxis, selectedYaxis);

@@ -18,7 +18,7 @@ import util.DateTime;
 
 public class PopulateJFreeChartTaskImpl extends PopulateChartTaskImpl<XYDataset> {
 
-	private static Logger logger = LoggerFactory.getLogger(PopulateJFreeChartTaskImpl.class);
+	private Logger logger = LoggerFactory.getLogger(PopulateJFreeChartTaskImpl.class);
 	
 	public PopulateJFreeChartTaskImpl(List<TableColumn<Integer,String>> f, String selectedXaxis, List<String> selectedYaxis) {
 		super(f, selectedXaxis, selectedYaxis);

@@ -23,7 +23,7 @@ public class PopulateBarChartTaskImpl extends PopulateChartTaskImpl<List<XYChart
 	}
 
 
-	private static Logger logger = LoggerFactory.getLogger(PopulateBarChartTaskImpl.class);
+	private Logger logger = LoggerFactory.getLogger(PopulateBarChartTaskImpl.class);
 	
 	
 	protected List<XYChart.Series<String,Double>> call() throws Exception {

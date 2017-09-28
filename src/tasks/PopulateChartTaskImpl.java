@@ -14,7 +14,7 @@ import util.Benchmark;
 
 public abstract class PopulateChartTaskImpl<T> extends Task<T>implements PopulateChartTask{
 
-	private static Logger logger = LoggerFactory.getLogger(PopulateBarChartTaskImpl.class);
+	private Logger logger = LoggerFactory.getLogger(PopulateBarChartTaskImpl.class);
 	
 	
 	final protected List<TableColumn<Integer,String>> f;
