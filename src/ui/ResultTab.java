@@ -25,6 +25,7 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressBar;
@@ -37,13 +38,14 @@ import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import tasks.PopulateChartTask;
+import tasks.PopulateBarChartTaskImpl;
+import tasks.PopulateChartTaskImpl;
 import util.Benchmark;
 import javafx.scene.control.TableColumn;
 
 
 @SuppressWarnings("unchecked")
-public class ResultTab {
+public abstract class ResultTab {
 
 	private static Logger logger = LoggerFactory.getLogger(ResultTab.class);
 
@@ -56,7 +58,7 @@ public class ResultTab {
 	TabPane tab_sp;
 	ListView yaxis;
 	ComboBox xaxis;
-	LineChart bc;
+	//LineChart bc;
 
 	String YAXIS = "Y-axis";
 	String XAXIS = "X-axis";
@@ -76,7 +78,7 @@ public class ResultTab {
 			tab = new Tab();
 			tab.setText(name);
 			tab.setId(name);
-			tab.setClosable(true);
+			
 			
 
 			this.tabpane = tabpane;
@@ -127,10 +129,7 @@ public class ResultTab {
 
 			tab_sp_hbox.getChildren().add(chart_sp);
 			
-			bc=createbarchar();
-			chart_sp_hbox.getChildren().add(bc);
-
-			
+		
 			GridPane grid = createGridPane();
 			lview_sp_hbox.getChildren().add(grid);
 
@@ -146,13 +145,13 @@ public class ResultTab {
 			
 			chart_sp_hbox.prefWidthProperty().bind(chart_sp.widthProperty());
 			chart_sp_hbox.prefHeightProperty().bind(chart_sp.heightProperty());
-			bc.prefWidthProperty().bind(chart_sp_hbox.widthProperty());
-			bc.prefHeightProperty().bind(chart_sp_hbox.heightProperty());
+
 			
 			chart_sp.prefWidthProperty().bind(tab_sp_hbox.widthProperty());
 			chart_sp.prefHeightProperty().bind(tab_sp_hbox.heightProperty());
 
 			tab.setContent(hbox);
+			tab.setClosable(true);
 			tabpane.getTabs().add(tab);
 
 			// populate data for ComboBox and ListView
@@ -166,86 +165,7 @@ public class ResultTab {
 
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private LineChart createbarchar() {
 
-		final CategoryAxis xAxis = new CategoryAxis();
-		final NumberAxis yAxis = new NumberAxis();
-	    
-		
-		final LineChart<String, Number> bc = new LineChart<String, Number>(xAxis, yAxis);
-
-		bc.setCreateSymbols(false);
-	    bc.setAnimated(false);
-	    
-		return bc;
-	}
-	
-	
-/*	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private LineChart createJFreechart() {
-
-		final CategoryAxis xAxis = new CategoryAxis();
-		final NumberAxis yAxis = new NumberAxis();
-	    
-		
-		final LineChart<String, Number> bc = new LineChart<String, Number>(xAxis, yAxis);
-
-		bc.setCreateSymbols(false);
-	    bc.setAnimated(false);
-	    
-	    
-	    CategoryDataset dataset = createDataset();
-        JFreeChart chart = createChart(dataset); 
-        ChartViewer viewer = new ChartViewer(chart);
-        //viewer.addChartMouseListener(this);
-	    
-	    
-		return bc;
-	}*/	
-
-	public final void populateChart() {
-
-		try {
-			TableColumn<Integer, String> xaxis = f.stream().filter(p -> p.getText().equals(selectedXaxis)).findAny()
-					.get();
-
-			List<TableColumn<Integer, String>> yaxis = f.stream().filter(p -> selectedYaxis.contains(p.getText()))
-					.map(p -> (TableColumn) p).collect(Collectors.toList());
-
-			bc.getData().clear();
-			System.out.println(bc.getData().size());
-			bc.setTitle(tab.getText());
-			bc.getYAxis().setLabel("Value");
-			bc.getXAxis().setLabel(xaxis.getText());
-
-			for (TableColumn y : yaxis) {
-				XYChart.Series series1 = new XYChart.Series();
-				series1.setName(y.getText());
-				int rows = y.getTableView().getItems().size();
-
-				Benchmark.tick();
-				if (rows > 0) {
-					for (int i = 1; i < rows; i++) {
-
-						String y_str = (String) y.getCellData(i); // System.out.print("y:
-																	// "+y_str);
-						String x_str = (String) xaxis.getCellData(i);// System.out.println("x:
-																		// "+x_str);
-
-						series1.getData().add(new XYChart.Data(x_str, Double.parseDouble(y_str)));
-					}
-				}
-
-				Benchmark.tock("Chart populated in:");
-				bc.getData().add(series1);
-
-			}
-		} catch (NumberFormatException ex) {
-			logger.error("Can't build chart as one of series is not numeric", ex);
-		}
-
-	}
 
 	public final void populateChartDataSeries() {
 		generateYaxis(tbl);
@@ -279,73 +199,13 @@ public class ResultTab {
 		bar=new ProgressBar();
 		
 		grid.add(bar, 1, 4);
-
-		btn.setOnAction(new EventHandler<ActionEvent>() {
-
-			@Override
-			public void handle(ActionEvent e) {
-				// populateChart();
-
-				//LineChart b_c=createbarchar();
-				
-				System.out.println(bc.getData().size());
-				bc.getData().clear();
-				
-				chart_sp_hbox.getChildren().clear();
-				chart_sp_hbox.getChildren().add(bc);
-				bc.setTitle(tab.getText());
-				bc.getYAxis().setLabel("Value");
-				bc.getXAxis().setLabel("Time");
-				
-				
-				
-
-				PopulateChartTask task = new PopulateChartTask(f, selectedXaxis, selectedYaxis);
-				
-				bar.progressProperty().bind(task.progressProperty());
-				
-				new Thread(task).start();
-
-				task.setOnSucceeded(ev -> {
-					try {
-						Platform.runLater(new Runnable() {
-
-							@Override
-							public void run() {
-								Benchmark.tick();
-								List<XYChart.Series<String,Double>> l=task.getValue();
-								
-								
-								if (l.size()>100){
-									if(bc.getXAxis().isTickMarkVisible())
-										bc.getXAxis().setTickMarkVisible(false);
-									else
-										bc.getXAxis().setTickMarkVisible(true);
-									
-									bc.getXAxis().setTickLabelsVisible(false);
-								}
-								
-								bc.getData().addAll(FXCollections.observableList(l));
-								Benchmark.tock("BarChart series added");
-								
-								
-							}
-						});
-
-					} catch (Exception ex) {
-						logger.error("Something went wrong", ex);
-					}
-					;
-				}
-
-				);
-
-			}
-		});
-
+		EventHandler<ActionEvent> evh=getChartButtonEventHandler();
+		btn.setOnAction(evh);
 		return grid;
 
 	}
+
+	
 
 	private String selectedXaxis = "";
 
@@ -371,6 +231,10 @@ public class ResultTab {
 
 	private List<TableColumn<Integer, String>> f;
 
+	protected List<TableColumn<Integer, String>> getTableData(){return (f!=null)? f : null;}
+	protected List<String> getSelectedYaxis(){return selectedYaxis;}
+	protected String getSelectedXaxis(){return selectedXaxis;}
+	
 	private ListView generateYaxis(TableView tbl) {
 		f = (List<TableColumn<Integer, String>>) tbl.getColumns().stream().map(p -> ((TableColumn) p))
 				.collect(Collectors.toList());
@@ -387,8 +251,15 @@ public class ResultTab {
 		return yaxis;
 	}
 
-	public TableView getTable() {
+	protected TableView getTable() {
 		return tbl;
 	}
 
+	
+	protected abstract PopulateChartTaskImpl getPopulateChartTask(List<TableColumn<Integer,String>> f,String selectedXaxis,List<String> selectedYaxis);
+	protected abstract EventHandler<ActionEvent> getChartButtonEventHandler();
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	protected abstract Object createChart();
+	
 }

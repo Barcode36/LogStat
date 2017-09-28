@@ -63,7 +63,10 @@ import statmanager.StatisticManager;
 import statmanager.UnsupportedStatFormatException;
 import tasks.ParseTask;
 import tasks.PrintTask;
+import ui.BarChartResultTab;
+import ui.JFreeChartResultTab;
 import ui.ResultTab;
+import ui.ResultTabFactory;
 import util.FilesUtil;
 import utils.Functions;
 import enums.*;
@@ -198,7 +201,9 @@ public class SampleController {
 			}
 
 
-			new ResultTab(tabpane,selectedFile.getName(), data);
+			//new BarChartResultTab(tabpane,selectedFile.getName(), data);
+			
+			ResultTabFactory.getInstance(tabpane,selectedFile.getName(), data);
 			
 		} catch (IOException ex) {
 
@@ -497,7 +502,8 @@ public class SampleController {
 			task.setOnSucceeded(e -> {
 				try {
 
-					new ResultTab(tabpane,arg.getOut(), task.getValue());
+					//new BarChartResultTab(tabpane,arg.getOut(), task.getValue());
+					ResultTabFactory.getInstance(tabpane,arg.getOut(), task.getValue());
 					
 				} catch (Exception ex) {
 					logger.error("Something went wrong", ex);
