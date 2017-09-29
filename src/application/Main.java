@@ -2,6 +2,10 @@ package application;
 	
 import java.io.File;
 
+import org.slf4j.LoggerFactory;
+
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.core.util.StatusPrinter;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -33,6 +37,12 @@ public class Main extends Application {
 	}
 	
 	public static void main(String[] args) {
+		  // assume SLF4J is bound to logback in the current environment
+		  LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+		  // print logback's internal status
+		  StatusPrinter.print(lc);
+		  
+		  
 		launch(args);
 	}
 }

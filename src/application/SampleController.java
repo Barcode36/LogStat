@@ -29,6 +29,8 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 import com.sun.javafx.tk.FileChooserType;
 
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.core.util.StatusPrinter;
 import cmdline.CmdLineParser;
 import cmdline.Command;
 import cmdline.CommandImpl;
@@ -268,11 +270,14 @@ public class SampleController {
 		cb_sampling.getItems().addAll(Sampling.values());
 		cb_sampling.getSelectionModel().select(Sampling.ZERO);
 
+
+		
 		// configuration to send log events to textarea
 		OutputStream os = new TextAreaOutputStream(tb_console);
 
 		MyStaticOutputStreamAppender.setStaticOutputStream(os);
 
+		
 		// textAreaHandler.setTextArea(tb_console);
 
 		// configuration to update Files Tab with list of selected files
@@ -292,6 +297,9 @@ public class SampleController {
 
 		printFolderFilesToConsole();
 
+
+		  
+		  
 	}
 
 	private static class TextAreaOutputStream extends OutputStream {

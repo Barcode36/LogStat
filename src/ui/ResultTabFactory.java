@@ -7,7 +7,7 @@ import javafx.scene.control.TabPane;
 public class ResultTabFactory {
 	
 	public static ResultTab getInstance(TabPane tabpane, String name, List<String> data){
-		return new BarChartResultTab(tabpane,name,data);
+		return new JFreeChartResultTab(tabpane,name,data);
 	}
 
 }

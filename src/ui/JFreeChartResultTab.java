@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 import org.jfree.chart.ChartFactory;
@@ -18,6 +19,8 @@ import org.jfree.chart.axis.DateTickUnit;
 import org.jfree.chart.axis.DateTickUnitType;
 import org.jfree.chart.block.BlockBorder;
 import org.jfree.chart.fx.ChartViewer;
+import org.jfree.chart.override.MyChartFactory;
+import org.jfree.chart.override.MyDateAxis;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
@@ -89,13 +92,17 @@ public class JFreeChartResultTab extends ResultTab{
             
             DateAxis dateaxis = (DateAxis) plot.getDomainAxis();
             
+            dateaxis.setStandardTickUnits(MyDateAxis.createStandardDateTickUnits(TimeZone.getDefault(),Locale.getDefault()));
+            
             //@SuppressWarnings("unused")
     		//DateTickUnit s=dateaxis.getTickUnit();
             
-            dateaxis.setTickUnit(new DateTickUnit(DateTickUnitType.MONTH, 1, new SimpleDateFormat("dd.MMM.yy hh:mm:ss.sss", Locale.US)));
+            dateaxis.setTickUnit(new DateTickUnit(DateTickUnitType.MONTH, 1, new SimpleDateFormat("dd.MMM.yy hh:mm:ss.sss", Locale.US)), true,false);
             
             dateaxis.setVerticalTickLabels(true);
             dateaxis.setAutoRange(true);
+            
+
             
             XYItemRenderer r = plot.getRenderer();
             if (r instanceof XYLineAndShapeRenderer) {

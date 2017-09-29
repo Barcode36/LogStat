@@ -1,5 +1,6 @@
 package tasks;
 
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,10 +53,16 @@ public class PopulateJFreeChartTaskImpl extends PopulateChartTaskImpl<XYDataset>
         			String y_str=(String)y.getCellData(i); //System.out.print("y: "+y_str);
         			String x_str=(String) xaxis.getCellData(i);//System.out.println("x: "+x_str);
         			
+        			try{
         			series1.add(new Millisecond(util.DateTime.asDate(
         					util.DateTime.SimpleStringToDate(x_str)
         					)), Double.parseDouble(y_str));
-        			
+        			}catch(DateTimeParseException dfe){
+        				logger.error("Failed to parse a date string, missing",x_str);
+        			}catch(NumberFormatException nfe){
+        				logger.error("Failed to parse a number value, missing",y_str);
+        			}
+
         			updateProgress(progress++,yaxis.size()*rows);
         		}
         		
