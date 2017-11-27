@@ -1,6 +1,5 @@
 package tasks;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -8,9 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javafx.concurrent.Task;
-import javafx.scene.chart.XYChart;
 import javafx.scene.control.TableColumn;
-import util.Benchmark;
 
 public abstract class PopulateChartTaskImpl<T> extends Task<T>implements PopulateChartTask{
 
@@ -25,6 +22,7 @@ public abstract class PopulateChartTaskImpl<T> extends Task<T>implements Populat
 	protected List<TableColumn<Integer,String>> yaxis; 
 
 	
+	
 	public PopulateChartTaskImpl(List<TableColumn<Integer,String>> f,String selectedXaxis,List<String> selectedYaxis){
 		
 		this.f=f;
@@ -35,7 +33,7 @@ public abstract class PopulateChartTaskImpl<T> extends Task<T>implements Populat
 				.findAny().get();
 				
 		yaxis= f.stream().filter(p->selectedYaxis.contains(p.getText()))
-				.map(p->(TableColumn)p)
+				.map(p->(TableColumn<Integer, String>)p)
 				.collect(Collectors.toList());
 		
 	}

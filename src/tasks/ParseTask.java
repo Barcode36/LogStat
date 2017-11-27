@@ -2,6 +2,7 @@ package tasks;
 
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -10,6 +11,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.jfree.util.Log;
+
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 
@@ -17,6 +20,7 @@ import application.ArgumentsHolder;
 import cmdline.CmdLineParser;
 import cmdline.Command;
 import cmdline.CommandImpl;
+import garbagecleaner.FKTProperties;
 import garbagecleaner.ProcessFiles;
 import garbagecleaner.ProcessFilesFabric;
 import javafx.concurrent.Task;
@@ -28,14 +32,30 @@ public class ParseTask<T> extends Task <T>{
 
 	private String[] args;
 	ArgumentsHolder arg_hld;
+	private File jarPath = new File(getClass().getProtectionDomain().getCodeSource().getLocation().getPath());
+	private String propertiesPath = jarPath.getParentFile().getAbsolutePath() + "\\conf\\";
+	private String resultPath = jarPath.getParentFile().getAbsolutePath() + "\\results\\";
+	private FKTProperties context = FKTProperties.getProperties();
+	
 
 	public ParseTask(String... args) {
 		this.args = args;
+		context.jarPath=jarPath;
+		context.propertiesPath=propertiesPath;
+		context.resultPath=resultPath;
+		
+		Log.info("Context updated:\n"+context.toString());
 	} 
 
 	public ParseTask(ArgumentsHolder args) throws Exception {
 		this.arg_hld = args;
 		this.args=args.getCMDLine();
+		
+		context.jarPath=jarPath;
+		context.propertiesPath=propertiesPath;
+		context.resultPath=resultPath;
+		
+		Log.info("Context updated:\n"+context.toString());
 	} 
 	
 	@Override
@@ -52,15 +72,15 @@ public class ParseTask<T> extends Task <T>{
 				args=arg_hld.getCMDLine(); //update command line parameters
 			}
 			
-			String path = Paths.get("").toAbsolutePath().toString() + "\\results";
+			//String path = Paths.get("").toAbsolutePath().toString() + "\\results";
 
 			commander.parse(args);
-			Command cmd = cmdParser.getCommandObj(commander.getParsedCommand());
+			Command cmd = cmdParser.getCommandObj(commander.getParsedCommand(),context);
 
 			executeParsing((CommandImpl) cmd).getStatData();
 
 			List result = Arrays.asList(
-					FilesUtil.read(new FileInputStream((path + "\\" + arg_hld.getOut())))
+					FilesUtil.read(new FileInputStream((context.resultPath + "\\" + arg_hld.getOut())))
 					);
 
 			return (T) result;

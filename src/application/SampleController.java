@@ -36,6 +36,7 @@ import cmdline.Command;
 import cmdline.CommandImpl;
 import cmdline.CommandParse;
 import garbagecleaner.ENUMERATIONS;
+import garbagecleaner.FKTProperties;
 import garbagecleaner.ProcessFilesFabric;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -74,6 +75,7 @@ import utils.Functions;
 import enums.*;
 
 import org.ini4j.Ini;
+import org.jfree.util.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,7 +85,8 @@ public class SampleController {
 	private File jarPath = new File(getClass().getProtectionDomain().getCodeSource().getLocation().getPath());
 	private String propertiesPath = jarPath.getParentFile().getAbsolutePath() + "\\conf\\";
 	private String resultPath = jarPath.getParentFile().getAbsolutePath() + "\\results\\";
-
+	private FKTProperties context = FKTProperties.getProperties();
+	
 	@FXML
 	private ProgressBar bar;
 
@@ -428,6 +431,8 @@ public class SampleController {
 			// from file only and only from this location
 			if (Files.notExists(Paths.get(propertiesPath + "" + selectedFile.getName()), LinkOption.NOFOLLOW_LINKS))
 				btn_save_statfile_fired(event);
+			else
+				logger.info("Found statfile at: "+propertiesPath + "" + selectedFile.getName());
 
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -614,8 +619,10 @@ public class SampleController {
 			fileWriter = new FileWriter(file);
 			fileWriter.write(content);
 			fileWriter.close();
+			logger.info(file.getName()+" saved succesfully to: "+file.getAbsolutePath());
 		} catch (IOException ex) {
-			ex.printStackTrace();
+			logger.error("Error while saving to the file", ex);
+			
 		}
 
 	}

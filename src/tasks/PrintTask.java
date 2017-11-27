@@ -25,7 +25,9 @@ import cmdline.CommandPrint;
 import garbagecleaner.ProcessFiles;
 import garbagecleaner.ProcessFilesFabric;
 import javafx.concurrent.Task;
+import statmanager.StatfileNotFoundException;
 import statmanager.UnsupportedStatFormatException;
+import statmanager.UnsupportedStatParamException;
 import util.FilesUtil;
 import application.ArgumentsHolder;
 
@@ -49,7 +51,7 @@ public class PrintTask extends Task {
 	}
 	
 
-	public Map<String,String> executeParsing() throws UnsupportedStatFormatException{
+	public Map<String,String> executeParsing() throws UnsupportedStatFormatException,StatfileNotFoundException,UnsupportedStatParamException{
 		
 		// TODO Auto-generated method stub
 		CmdLineParser cmdParser = new CmdLineParser();

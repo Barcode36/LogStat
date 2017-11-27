@@ -168,7 +168,11 @@ public class JFreeChartResultTab extends ResultTab{
 						        JFreeChart chart = createJFreeChart(tab.getText(),dataset); 
 						        ChartViewer viewer = new ChartViewer(chart);  
 						        Benchmark.tock("Chart created");
+								chart_sp_hbox.getChildren().clear();
 								chart_sp_hbox.getChildren().add(viewer);
+								viewer.prefHeightProperty().bind(chart_sp_hbox.heightProperty());
+								viewer.prefWidthProperty().bind(chart_sp_hbox.widthProperty());
+								
 							}
 						});
 
