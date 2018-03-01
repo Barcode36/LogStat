@@ -401,8 +401,9 @@ public class SampleController {
 					"Properties files(*.properties,*.ini)", "*.properties", "*.ini");
 			fileChooser.getExtensionFilters().add(extFilter);
 
-			if (null != lastFile)
+			if (null != lastFile && lastFile.exists())
 				fileChooser.setInitialDirectory(lastFile);
+			
 
 			File selectedFile = fileChooser.showOpenDialog(new Stage());
 			if (selectedFile != null) {
